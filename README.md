@@ -6,7 +6,7 @@ This MATLAB script processes and analyzes Malaysian property transaction data ba
 
 ---
 
-## 📂 Dataset
+## Dataset
 
 The data is sourced from the **National Property Information Centre (NAPIC)**. You can download the **Open Sales Data (Transaction Data)** CSV from the official portal:
 
@@ -28,7 +28,7 @@ Make sure this file is located in the same directory as the script. The dataset 
 
 ---
 
-## ⚙️ User Inputs
+## User Inputs
 
 You can customize the analysis by modifying the following variables in the script:
 
@@ -45,9 +45,9 @@ Leave a variable as an empty array `[]` to ignore that filter.
 
 ---
 
-## 🔍 Features
+## Features
 
-### ✅ Filtering:
+### Filtering:
 
 * Filter transaction data by:
 
@@ -58,14 +58,14 @@ Leave a variable as an empty array `[]` to ignore that filter.
   * Year
   * Tenure
 
-### ✅ Calculations:
+### Calculations:
 
 * Computes **Price per Square Foot (PSF)** based on:
 
   * Land/Parcel Area
   * Main Floor Area
 
-### ✅ Visualizations:
+### Visualizations:
 
 * **Boxplot** of PSF by property type
 * **Histogram** of PSF distribution
@@ -73,7 +73,7 @@ Leave a variable as an empty array `[]` to ignore that filter.
 
 ---
 
-## 📊 Outputs
+## Outputs
 
 The script generates the following plots:
 
@@ -85,7 +85,7 @@ These plots help in comparing property values and understanding pricing trends a
 
 ---
 
-## 📌 Notes
+## Notes
 
 * **Area Conversion**: The script converts areas from square meters to square feet using:
   1 m² = 10.7639 ft²
@@ -99,20 +99,20 @@ These plots help in comparing property values and understanding pricing trends a
 
 ---
 
-## 🧩 Requirements
+## Requirements
 
 * MATLAB (recommended R2020b or newer)
 * A properly formatted `Open Transaction Data.csv` file
 
 ---
 
-## 🧑‍💻 Author
+## Author
 
 This script was written to analyze Malaysian property transaction data for market trends and comparative valuation.
 
 ---
 
-## 📥 Example Usage
+## Example Usage
 
 To analyze only "Condominium/Apartment" transactions in Kuala Lumpur for the year 2024:
 
@@ -124,7 +124,7 @@ interestedYear = ["2024"];
 
 ---
 
-## 📜 License
+## License
 
 This project is open for educational and non-commercial use. If you build upon it, credit is appreciated.
 
