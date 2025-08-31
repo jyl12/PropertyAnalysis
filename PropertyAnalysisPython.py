@@ -8,17 +8,18 @@ import seaborn as sns
 interested_sector = []  # e.g., "Residential", "Commercial", etc.
 interested_state = ["Kuala Lumpur"]  # e.g., states of interest
 interested_district = ["Kuala Lumpur"]  # specific districts
-interested_property_type = ["Flat", "Condominium/Apartment"]
+interested_property_type = ["1 - 1 1/2 Storey Shop","Flat"]
 interested_year = ["2024","2025"]
 interested_tenure = []  # e.g., "Freehold", "Leasehold"
 
 # ===================== LOAD DATA =====================
-filename = r'C:\Users\Inspiron\Documents\Git\PropertyAnalysis\Open Transaction Data.csv'
+filename = r'C:\Users\Inspiron\Documents\Git\RealEstateAnalysis\Open Transaction Data.csv'
 data = pd.read_csv(
     filename,
     encoding='utf-16',
     sep='\t',              # Tab-delimited file
-    thousands=','          # Handle numbers like 1,000 properly
+    thousands=',',          # Handle numbers like 1,000 properly
+    low_memory=False
 )
 
 # ===================== REFERENCE DICTIONARIES =====================
@@ -122,33 +123,104 @@ filtered_data["PSF (Land/Parcel Area)"] = price_numeric / (land_area * 10.7639)
 filtered_data["PSF (Main Floor Area)"] = price_numeric / (built_up_area * 10.7639)
 
 # ===================== VISUALIZATION =====================
+# First dataset: PSF (Land)
+psf_land = filtered_data[["Property Type","PSF (Land/Parcel Area)"]].dropna()
+# Second dataset: PSF (Built-up)
+psf_built = filtered_data[["Property Type","PSF (Main Floor Area)"]].dropna()
 
 # Boxplot
-plt.figure(figsize=(12, 6))
-sns.boxplot(data=filtered_data, x="Property Type", y="PSF (Land/Parcel Area)")
-plt.xticks(rotation=45, ha='right')
-plt.title("Price Per Square Foot (Land/Parcel Area) by Property Type")
-plt.ylabel("PSF (RM)")
-plt.xlabel("Property Type")
+# Count how many plots to create
+n_subplots = 1 + int(not psf_built.empty)
+
+# Create subplots
+fig, axes = plt.subplots(1, n_subplots, figsize=(8 * n_subplots, 6), sharey=True)
+if n_subplots == 1:
+    axes = [axes]
+
+# First subplot: PSF (Land Area)
+sns.boxplot(data=psf_land, x="Property Type", y="PSF (Land/Parcel Area)", ax=axes[0])
+axes[0].set_title("Price per Square Foot (Land/Parcel Area) by Property Type")
+axes[0].set_xlabel("Property Type")
+axes[0].set_ylabel("Price per Square Foot")
+axes[0].tick_params(axis='x', rotation=45)
+
+# Second subplot: PSF (Built-up Area), only if data exists
+if not psf_built.empty:
+    sns.boxplot(data=psf_built, x="Property Type", y="PSF (Main Floor Area)", ax=axes[1])
+    axes[1].set_title("Price per Square Foot (Built-up Area) by Property Type ")
+    axes[1].set_xlabel("Property Type")
+    axes[1].set_ylabel("Price per Square Foot")
+    axes[1].tick_params(axis='x', rotation=45)
+
 plt.tight_layout()
 plt.show()
 
 # Histogram
-plt.figure(figsize=(10, 5))
+n_subplots = 1 + int(not psf_built.empty)
+
+fig, axes = plt.subplots(1, n_subplots, figsize=(10 * n_subplots, 5), sharey=True)
+if n_subplots == 1:
+    axes = [axes]
+# First subplot: PSF (Land Area)
 valid = filtered_data["PSF (Land/Parcel Area)"].dropna()
-plt.hist(valid, bins=50)
-plt.xlabel("Price Per Square Foot (Land/Parcel Area)")
-plt.ylabel("Number of Transactions")
-plt.title("Distribution of Property Prices per Square Foot")
+axes[0].hist(valid, bins=50)
+axes[0].set_title("Distribution of Property Prices per Square Foot")
+axes[0].set_xlabel("Price Per Square Foot (Land/Parcel Area)")
+axes[0].set_ylabel("Number of Transactions")
+
+# Second subplot: PSF (Built-up Area), only if data exists
+if not psf_built.empty:
+    valid = filtered_data["PSF (Main Floor Area)"].dropna()
+    axes[1].hist(valid,  bins=50)
+    axes[1].set_title("Distribution of Property Prices per Square Foot")
+    axes[1].set_xlabel("Price Per Square Foot (Main Floor Area)")
+    axes[1].set_ylabel("Number of Transactions")
+
 plt.tight_layout()
 plt.show()
 
 # Scatter Plot
-valid_data = filtered_data.dropna(subset=["Land/Parcel Area", "PSF (Land/Parcel Area)", "Property Type"])
-plt.figure(figsize=(10, 6))
-sns.scatterplot(data=valid_data, x="Land/Parcel Area", y="PSF (Land/Parcel Area)", hue="Property Type")
-plt.xlabel("Land/Parcel Area (m²)")
-plt.ylabel("Price Per Square Foot (Land/Parcel Area)")
-plt.title("Property Size vs. Price per Square Foot")
+# Filter valid data for Land/Parcel Area PSF
+valid_land = filtered_data.dropna(subset=["Land/Parcel Area", "PSF (Land/Parcel Area)", "Property Type"])
+
+# Filter valid data for Main Floor Area PSF (if exists)
+valid_built = filtered_data.dropna(subset=["Main Floor Area", "PSF (Main Floor Area)", "Property Type"])
+
+# Determine how many subplots (1 or 2)
+n_plots = 1 + int(not valid_built.empty)
+
+fig, axes = plt.subplots(1, n_plots, figsize=(10 * n_plots, 6), sharey=True)
+
+# If only one subplot, axes is not a list, make it one for uniformity
+if n_plots == 1:
+    axes = [axes]
+
+# Plot 1: Land/Parcel Area PSF scatter
+sns.scatterplot(
+    data=valid_land,
+    x="Land/Parcel Area",
+    y="PSF (Land/Parcel Area)",
+    hue="Property Type",
+    alpha=0.7,
+    ax=axes[0]
+)
+axes[0].set_title("Land/Parcel Area vs Price per Square Foot")
+axes[0].set_xlabel("Land/Parcel Area")
+axes[0].set_ylabel("Price Per Square Foot (Land/Parcel Area)")
+
+# Plot 2: Main Floor Area PSF scatter (if data available)
+if n_plots == 2:
+    sns.scatterplot(
+        data=valid_built,
+        x="Main Floor Area",
+        y="PSF (Main Floor Area)",
+        hue="Property Type",
+        alpha=0.7,
+        ax=axes[1]
+    )
+    axes[1].set_title("Main Floor Area vs Price per Square Foot")
+    axes[1].set_xlabel("Main Floor Area")
+    axes[1].set_ylabel("Price Per Square Foot (Land/Parcel Area)")
+
 plt.tight_layout()
 plt.show()
