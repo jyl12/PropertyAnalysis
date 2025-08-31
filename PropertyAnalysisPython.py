@@ -6,9 +6,9 @@ import seaborn as sns
 
 # ===================== USER INPUTS =====================
 interested_sector = []  # e.g., "Residential", "Commercial", etc.
-interested_state = ["Sarawak"]  # e.g., states of interest
-interested_district = ["Bahagian Samarahan"]  # specific districts
-interested_property_type = ["Flat", "Low-Cost Flat","Condominium/Apartment"]
+interested_state = ["Kuala Lumpur"]  # e.g., states of interest
+interested_district = ["Kuala Lumpur"]  # specific districts
+interested_property_type = ["Flat", "Condominium/Apartment"]
 interested_year = ["2024","2025"]
 interested_tenure = []  # e.g., "Freehold", "Leasehold"
 
@@ -17,9 +17,8 @@ filename = r'C:\Users\Inspiron\Documents\Git\PropertyAnalysis\Open Transaction D
 data = pd.read_csv(
     filename,
     encoding='utf-16',
-    sep='\t',               # Tab-delimited file
-    thousands=',',          # Handle numbers like 1,000 properly
-    low_memory=False        # Let Pandas read entire file before inferring types
+    sep='\t',              # Tab-delimited file
+    thousands=','          # Handle numbers like 1,000 properly
 )
 
 # ===================== REFERENCE DICTIONARIES =====================
